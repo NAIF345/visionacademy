@@ -4,30 +4,28 @@ namespace App\Http\Controllers\API\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
-use App\User;
 use GuzzleHttp;
 
-class RegisterController extends Controller
+class LoginController extends Controller
 {
 
-
-    public function register(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
+        $credentials = request(['email', 'password']);
 
-        $user->save();
-
+        if (!Auth::attempt($credentials)) {
+            return Response::json([
+                'status' => 'error',
+                'message' => 'Invalid credentials, please try again.'
+            ], 401);
+        }
 
         $client = new GuzzleHttp\Client;
         $response = $client->post(url('oauth/token'), [
@@ -40,10 +38,11 @@ class RegisterController extends Controller
                 'scope' => '',
             ],
         ]);
+
         return Response::json([
             'status' => 'success',
-            'message' => 'Your account has been created successfully!',
+            'message' => 'You have logged in successfully!',
             'data' => json_decode((string) $response->getBody(), true)
-        ], 201);
+        ], 200);
     }
 }
