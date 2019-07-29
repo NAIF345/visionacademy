@@ -12,21 +12,29 @@ class UniversityController extends Controller
 
     public function getAllUniversities()
     {
+
         $universities = University::OrderBy('id', 'asc')->get();
-        return Response::json($universities);
+        return Response::json([
+            'success' => true,
+            'message' => 'All unversrties returned successfully.',
+            'universties' => $universities
+        ], 200);
     }
 
-    public static  function getUniversity(Request $request)
+    public static  function getUniversity($id)
     {
-        $request->validate([
-            'university_id' => 'required|numeric',
-        ]);
-        $university = University::find($request->university_id);
+        $id = (int) $id;
+
+        $university = University::find($id);
         if ($university == null)
             return Response::json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'The required university not found!'
-            ]);
-        return Response::json($university);
+            ],404);
+        return  Response::json([
+            'success' => true,
+            'message' => 'The required university returned successfully!',
+            'university' => $university
+        ], 200);
     }
 }

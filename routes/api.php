@@ -35,8 +35,7 @@ Route::post('/login', 'API\Auth\LoginController@login');
 */
 
 Route::get('/university/all', 'API\University\UniversityController@getAllUniversities');
-Route::post('/university/all', 'API\University\UniversityController@getAllUniversities');
-Route::post('/university/get', 'API\University\UniversityController@getUniversity');
+Route::get('/university/{id}', 'API\University\UniversityController@getUniversity');
 
 /*
 |--------------------------------------------------------------------------

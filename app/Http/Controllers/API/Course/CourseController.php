@@ -18,7 +18,7 @@ class CourseController extends Controller
             return Response::json([
                 'status' => 'error',
                 'message' => 'You dont have the right permission to perform this action.'
-            ],401);
+            ], 401);
         }
         return Response::json(Auth::user()->courses);
     }
